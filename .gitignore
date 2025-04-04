@@ -40,3 +40,6 @@ CMakeFiles/
 CMakeCache.txt
 CMakeOutput.log
 CMakeError.log
+
+# Ising specific stuff
+*.dat
