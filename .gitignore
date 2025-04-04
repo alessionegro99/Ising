@@ -30,3 +30,13 @@
 *.exe
 *.out
 *.app
+
+# Visual Studio Code
+.vscode/
+.vscode-test/
+
+# CMake
+CMakeFiles/
+CMakeCache.txt
+CMakeOutput.log
+CMakeError.log
