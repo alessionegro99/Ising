@@ -2,7 +2,7 @@
 
 #include "../include/parameters.hpp"
 
-void geometry::lex_to_cart(long cart_coord[], long lex) {
+void Geometry::lex_to_cart(long cart_coord[], long lex) {
   long aux[DIM];
 
   aux[0] = 1;
@@ -21,7 +21,7 @@ void geometry::lex_to_cart(long cart_coord[], long lex) {
   }
 }
 
-int geometry::cart_to_lex(long cart_coord[]) {
+int Geometry::cart_to_lex(long cart_coord[]) {
   long res, aux;
 
   res = 0;
@@ -41,7 +41,7 @@ int geometry::cart_to_lex(long cart_coord[]) {
   return res;
 }
 
-void geometry::print_all() {
+void Geometry::print_all() {
   std::cout << "Geometry related parameters: " << "\n";
   std::cout << "dimension DIM = " << DIM << "\n";
   std::cout << "extent L = " << L << "\n";
@@ -49,8 +49,8 @@ void geometry::print_all() {
   std::cout << "inverse volume 1/V = " << d_inv_vol << "\n";
 }
 
-// initialize geometry
-void geometry::init_geometry() {
+// initialize Geometry
+void Geometry::init_geometry() {
   int i, value, valuep, valuem, err;
   long r, rm, rp;
   long cart_coord[DIM];
@@ -124,7 +124,7 @@ void geometry::init_geometry() {
   } // end of loop on r
 }
 
-void geometry::free_geometry() {
+void Geometry::free_geometry() {
   long r;
 
   delete[] d_nnp;

@@ -7,15 +7,15 @@
 #include "Z2.hpp"
 #include "parameters.hpp"
 
-class configuration {
+class Configuration {
 private:
-  const geometry &geo;
-  const simulation &sim;
+  const Geometry &geo;
+  const Simulation &sim;
 
 public:
   Z2 *lattice; // [volume] lattice of Z2 spins
 
-  configuration(const geometry &geom, const simulation &simul)
+  Configuration(const Geometry &geom, const Simulation &simul)
       : geo(geom), sim(simul) {
     init_spin_conf();
   }
@@ -27,4 +27,8 @@ public:
   // in spin_conf_meas.cpp
   double magnetization(bool normalize = true); // measures magnetization
   double energy(bool normalize);               // measures energy
+
+  // in spin_conf_upd.cpp
+  double metropolis();
+  double update();
 };

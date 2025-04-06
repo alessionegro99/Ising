@@ -8,6 +8,7 @@
 #include "../include/io.hpp"
 #include "../include/parameters.hpp"
 #include "../include/spin_conf.hpp"
+#include "../include/timer.hpp"
 
 int main(int argc, char *argv[])
 {
@@ -27,9 +28,9 @@ int main(int argc, char *argv[])
     std::string filename = argv[2];
 
     // initialize
-    parameters p(filename);
-    geometry geo(p);
-    simulation sim(p);
+    Parameters p(filename);
+    Geometry geo(p);
+    Simulation sim(p);
 
     std::cout << "/*****************************/" << "\n";
 
@@ -38,15 +39,13 @@ int main(int argc, char *argv[])
 
     std::cout << "/*****************************/" << "\n";
 
-    // print all simulation parameters
+    // print all Simulation parameters
     sim.print_all();
     std::cout << "/*****************************/" << "\n";
 
-    configuration test_conf(geo, sim);
+    Configuration test_conf(geo, sim);
 
     test_conf.init_spin_conf();
-
-    
 
     test_conf.free_spin_conf();
 

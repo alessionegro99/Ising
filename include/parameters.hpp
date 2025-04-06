@@ -8,12 +8,12 @@
 #include <unordered_map>
 #include <vector>
 
-class parameters {
+class Parameters {
 private:
   std::unordered_map<std::string, std::string> p;
 
 public:
-  explicit parameters(const std::string &filename) { load_from_file(filename); }
+  explicit Parameters(const std::string &filename) { load_from_file(filename); }
 
   void load_from_file(const std::string &filename) {
     std::ifstream file(filename);
@@ -54,15 +54,15 @@ public:
   }
 };
 
-// simulation parameters
-class simulation {
+// Simulation parameters
+class Simulation {
 public:
   const long n_confs, n_meas, n_save, seed;
   const std::string start, updater;
   const double beta;
   const double J;
 
-  simulation(const parameters &p)
+  Simulation(const Parameters &p)
       : n_confs(p.get_int("n_confs")), n_meas(p.get_int("n_meas")),
         n_save(p.get_int("n_save")), seed(p.get_int("seed")),
         start(p.get_string("start")), updater(p.get_string("updater")),
@@ -73,8 +73,8 @@ public:
   void print_all();
 };
 
-// in geometry.cpp
-class geometry {
+// in Geometry.cpp
+class Geometry {
 public:
   const size_t L; // extent of the lattice
 
@@ -91,7 +91,7 @@ public:
   long **d_nnm; // d_nnm[r][i] = next neighbour (on the local lattice) in dir
                 // -i of site r
 
-  explicit geometry(const parameters &p) : L(p.get_int("L")) {
+  explicit Geometry(const Parameters &p) : L(p.get_int("L")) {
     init_geometry();
   }
 

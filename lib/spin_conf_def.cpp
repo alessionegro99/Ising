@@ -4,7 +4,7 @@
 #include "../include/random.hpp"
 #include "io.hpp"
 
-void configuration::init_spin_conf()
+void Configuration::init_spin_conf()
 {
     long r;
 
@@ -23,7 +23,7 @@ void configuration::init_spin_conf()
     }
 }
 
-void configuration::free_spin_conf()
+void Configuration::free_spin_conf()
 {
     long r;
 

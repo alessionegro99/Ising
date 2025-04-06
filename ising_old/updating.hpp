@@ -1,14 +1,3 @@
-#pragma once
-
-// on a space of dimension equal to S_DIM, given a constant coolness equal to beta,
-// pre-computes the 2*S_DIM + 1 possible Boltzmann weights arising from nearest neighbour
-// interaction.
-void computeBoltzmannWeights(const size_t S_DIM, const double J,const double beta){
-    std::vector<double> weights_Boltzmann;
-    for(int i = -int(S_DIM); i <= int(S_DIM); i++){
-        weights_Boltzmann.push_back(exp(- beta * 4 * J * i));
-    }  
-}
 
 // Computes the variation in the energy due to nearest neighbour interaction.
 int deltaH(std::vector<int> spin_config, int x, const size_t N, const size_t S_DIM)
