@@ -3,4 +3,4 @@
 #include <iostream>
 #include <random>
 
-std::mt19937 initializeRNG(int seed);
+std::mt19937 initialize_rng(int seed);

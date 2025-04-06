@@ -2,7 +2,7 @@
 
 #include <../include/parameters.hpp>
 
-void simulation::printAll()
+void simulation::print_all()
 {
     std::cout << "Simulation related parameters: " << "\n";
     std::cout << "number of configurations generated = " << n_confs << "\n";

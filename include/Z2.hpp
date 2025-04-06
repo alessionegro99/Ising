@@ -7,13 +7,12 @@ struct Z2 {
     int value;
     int order = 2;
 
-    // Constructor to initialize value
     Z2(int v = 1) {
         if (v == -1 || v == 1) {
             value = v;
         } else {
             std::cerr << "Invalid value. Z2 can only have -1 or 1." << std::endl;
-            value = 1;  // Default to 1 in case of invalid input
+            value = 1;  
         }
     }
 

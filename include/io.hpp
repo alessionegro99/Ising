@@ -1,7 +1,6 @@
 #pragma once
 
-#include <iostream>
-#include <fstream>
+#include <string>
 
-void fatalError(const std::string &message, const std::string &function_name);
-bool isFileEmpty(const std::string &file_name);
+void fatal_error(const std::string &message, const std::string &function_name);
+bool is_file_empty(const std::string &file_name);

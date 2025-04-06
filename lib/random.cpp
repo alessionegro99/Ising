@@ -2,7 +2,7 @@
 
 #include "../include/random.hpp"
 
-std::mt19937 initializeRNG(int seed)
+std::mt19937 initialize_rng(int seed)
 {
     if (seed != 0)
     {

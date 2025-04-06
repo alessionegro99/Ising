@@ -4,14 +4,14 @@
 #include "../include/random.hpp"
 #include "io.hpp"
 
-void configuration::initSpinConf()
+void configuration::init_spin_conf()
 {
     long r;
 
     lattice = new Z2[geo.d_vol];
     if (!lattice)
     {
-        fatalError("Failed to allocate memory for lattice.", __func__);
+        fatal_error("Failed to allocate memory for lattice.", __func__);
     }
 
     if (sim.start == "cold")
@@ -23,7 +23,7 @@ void configuration::initSpinConf()
     }
 }
 
-void configuration::freeSpinConf()
+void configuration::free_spin_conf()
 {
     long r;
 

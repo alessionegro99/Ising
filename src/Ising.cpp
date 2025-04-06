@@ -34,21 +34,21 @@ int main(int argc, char *argv[])
     std::cout << "/*****************************/" << "\n";
 
     // print all geometric parameters
-    geo.printAll();
+    geo.print_all();
 
     std::cout << "/*****************************/" << "\n";
 
     // print all simulation parameters
-    sim.printAll();
+    sim.print_all();
     std::cout << "/*****************************/" << "\n";
 
     configuration test_conf(geo, sim);
 
-    test_conf.initSpinConf();
+    test_conf.init_spin_conf();
 
     
 
-    test_conf.freeSpinConf();
+    test_conf.free_spin_conf();
 
     return 0;
 }

@@ -1,129 +1,107 @@
 #pragma once
 
-#include <iostream>
-#include <vector>
-#include <fstream>
-#include <string>
 #include <cmath>
-#include <unordered_map>
+#include <fstream>
+#include <iostream>
 #include <stdexcept>
+#include <string>
+#include <unordered_map>
+#include <vector>
 
-// generic container for all of the parameters read from the input file
-class parameters
-{
+class parameters {
 private:
-    std::unordered_map<std::string, std::string> p;
+  std::unordered_map<std::string, std::string> p;
 
 public:
-    explicit parameters(const std::string &filename)
-    {
-        loadFromFile(filename);
+  explicit parameters(const std::string &filename) { load_from_file(filename); }
+
+  void load_from_file(const std::string &filename) {
+    std::ifstream file(filename);
+
+    if (!file.is_open()) {
+      throw std::runtime_error("Error: Cannot open file " + filename);
     }
 
-    // Function to load parameters from the file
-    void loadFromFile(const std::string &filename)
-    {
-        std::ifstream file(filename);
-        if (!file.is_open())
-        {
-            throw std::runtime_error("Error: Cannot open file " + filename);
-        }
-
-        std::string key, value;
-        while (file >> key >> value)
-        {
-            p[key] = value;
-        }
-
-        file.close();
+    std::string key, value;
+    while (file >> key >> value) {
+      p[key] = value;
     }
 
-    std::string getString(const std::string &key) const
-    {
-        auto it = p.find(key);
-        if (it == p.end())
-        {
-            throw std::runtime_error("Error: Parameter '" + key + "' not found.");
-        }
-        return it->second;
-    }
+    file.close();
+  }
 
-    int getInt(const std::string &key) const
-    {
-        return std::stoi(getString(key)); // string to int
-    }
+  std::string get_string(const std::string &key) const {
+    auto it = p.find(key);
 
-    double getDouble(const std::string &key) const
-    {
-        return std::stod(getString(key)); // string to double
+    if (it == p.end()) {
+      throw std::runtime_error("Error: Parameter '" + key + "' not found.");
     }
+    return it->second;
+  }
 
-    void display() const
-    {
-        for (const auto &pair : p)
-        {
-            std::cout << pair.first << ": " << pair.second << std::endl;
-        }
+  int get_int(const std::string &key) const {
+    return std::stoi(get_string(key));
+  }
+
+  double get_double(const std::string &key) const {
+    return std::stod(get_string(key));
+  }
+
+  void display() const {
+    for (const auto &pair : p) {
+      std::cout << pair.first << ": " << pair.second << std::endl;
     }
+  }
 };
 
 // simulation parameters
-// in simulation.cpp
-class simulation
-{
+class simulation {
 public:
-    const long n_confs, n_meas, n_save, seed;
-    const std::string start, updater;
-    const double beta;
-    const double J;
+  const long n_confs, n_meas, n_save, seed;
+  const std::string start, updater;
+  const double beta;
+  const double J;
 
-    simulation(const parameters &p) : n_confs(p.getInt("n_confs")),
-                                      n_meas(p.getInt("n_meas")),
-                                      n_save(p.getInt("n_save")),
-                                      seed(p.getInt("seed")),
-                                      start(p.getString("start")),
-                                      updater(p.getString("updater")),
-                                      beta(p.getDouble("beta")),
-                                      J(p.getDouble("J"))
+  simulation(const parameters &p)
+      : n_confs(p.get_int("n_confs")), n_meas(p.get_int("n_meas")),
+        n_save(p.get_int("n_save")), seed(p.get_int("seed")),
+        start(p.get_string("start")), updater(p.get_string("updater")),
+        beta(p.get_double("beta")), J(p.get_double("J"))
 
-    {
-    }
+  {}
 
-    void printAll();
+  void print_all();
 };
 
-// geometry of the lattice
-class geometry
-{
+// in geometry.cpp
+class geometry {
 public:
-    const size_t L; // spatial extent of the lattice
+  const size_t L; // extent of the lattice
 
-    std::vector<size_t> d_size; // size of the lattice
+  size_t d_size[DIM]; // size of the lattice
 
-    long d_vol;       // total volume
-    double d_inv_vol; // 1/(total volume)
+  long d_vol;       // total volume
+  double d_inv_vol; // 1/(total volume)
 
-    size_t **d_nnp; // d_nnp[r][i] = next neighbour (on the local lattice) in dir +i of site r
-    size_t **d_nnm; // d_nnm[r][i] = next neighbour (on the local lattice) in dir -i of site r
+  long *d_nnp_mem;
+  long *d_nnm_mem;
 
-    explicit geometry(const parameters &p) : L(p.getInt("L"))
-    {
-        initGeometry();
-    }
+  long **d_nnp; // d_nnp[r][i] = next neighbour (on the local lattice) in dir
+                // +i of site r
+  long **d_nnm; // d_nnm[r][i] = next neighbour (on the local lattice) in dir
+                // -i of site r
 
-    inline long nnp(long r, int i) const
-    {
-        return d_nnp[r][i];
-    }
-    inline long nnm(long r, int i) const
-    {
-        return d_nnm[r][i];
-    }
+  explicit geometry(const parameters &p) : L(p.get_int("L")) {
+    init_geometry();
+  }
 
-    void lexToCart(long cart_coord[], long lex);
-    int cartToLex(long cart_coord[]);
+  inline long nnp(long r, int i) const { return d_nnp[r][i]; }
+  inline long nnm(long r, int i) const { return d_nnm[r][i]; }
 
-    void printAll();
-    void initGeometry();
-    void freeGeometry();
+  void lex_to_cart(long cart_coord[], long lex);
+  int cart_to_lex(long cart_coord[]);
+
+  void print_all();
+  void init_geometry();
+  void free_geometry();
 };
