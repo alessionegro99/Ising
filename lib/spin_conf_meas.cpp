@@ -7,7 +7,7 @@ double Configuration::magnetization(bool normalize = true) {
   long r;
 
   for (r = 0; r < geo.d_vol; r++) {
-    magnetization += lattice[r];
+    magnetization += lattice[r].value;
   }
 
   if (normalize) {
@@ -23,7 +23,7 @@ double Configuration::energy(bool normalize = true) {
 
   for (r = 0; r < geo.d_vol; r++) {
     for (i = 0; i < DIM; i++) { // vibe coded, check again
-      energy += -sim.J * lattice[r] * lattice[geo.nnp(r, i)];
+      energy += -sim.J * lattice[r].value * lattice[geo.nnp(r, i)].value;
     }
   }
 

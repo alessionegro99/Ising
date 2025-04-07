@@ -25,10 +25,10 @@ public:
   void free_spin_conf(); // frees gauge configuration memory
 
   // in spin_conf_meas.cpp
-  double magnetization(bool normalize = true); // measures magnetization
-  double energy(bool normalize);               // measures energy
+  double magnetization(bool normalize); // measures magnetization
+  double energy(bool normalize);        // measures energy
 
   // in spin_conf_upd.cpp
-  double metropolis();
+  int metropolis(long r);
   double update();
 };
