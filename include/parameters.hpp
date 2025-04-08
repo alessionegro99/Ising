@@ -91,7 +91,7 @@ public:
   long **d_nnm; // d_nnm[r][i] = next neighbour (on the local lattice) in dir
                 // -i of site r
 
-  explicit Geometry(const Parameters &p) : L(p.get_int("L")) {
+  explicit Geometry(const Parameters &params) : L(params.get_int("L")) {
     init_geometry();
   }
 

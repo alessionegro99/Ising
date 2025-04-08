@@ -27,12 +27,16 @@ int main(int argc, char *argv[])
 
     std::string filename = argv[2];
 
-    // initialize
-    Parameters p(filename);
-    Geometry geo(p);
-    Simulation sim(p);
 
-    std::cout << "/*****************************/" << "\n";
+    // initialize
+    Parameters params(filename);
+
+    Geometry geo(params);
+
+    Simulation sim(params);
+
+
+
 
     // print all geometric parameters
     geo.print_all();

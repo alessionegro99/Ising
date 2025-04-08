@@ -2,6 +2,14 @@
 
 #include "../include/parameters.hpp"
 
+void Geometry::print_all() {
+  std::cout << "Geometry related parameters: " << "\n";
+  std::cout << "dimension DIM = " << DIM << "\n";
+  std::cout << "extent L = " << L << "\n";
+  std::cout << "volume V = " << d_vol << "\n";
+  std::cout << "inverse volume 1/V = " << d_inv_vol << "\n";
+}
+
 void Geometry::lex_to_cart(long cart_coord[], long lex) {
   long aux[DIM];
 
@@ -14,7 +22,7 @@ void Geometry::lex_to_cart(long cart_coord[], long lex) {
   // aux[2]=size[0]*size[1]
   // ...
   // aux[STDIM-1]=size[0]*size[1]*...*size[STDIM-2]
-  for (int i = (DIM - 1); i >= 0; i--) // CAREFUL: DO NOT use size_t i
+  for (int i = (DIM - 1); i >= 0; i--)
   {
     cart_coord[i] = (int)(lex / aux[i]);
     lex -= aux[i] * cart_coord[i];
@@ -41,15 +49,6 @@ int Geometry::cart_to_lex(long cart_coord[]) {
   return res;
 }
 
-void Geometry::print_all() {
-  std::cout << "Geometry related parameters: " << "\n";
-  std::cout << "dimension DIM = " << DIM << "\n";
-  std::cout << "extent L = " << L << "\n";
-  std::cout << "volume V = " << d_vol << "\n";
-  std::cout << "inverse volume 1/V = " << d_inv_vol << "\n";
-}
-
-// initialize Geometry
 void Geometry::init_geometry() {
   int i, value, valuep, valuem, err;
   long r, rm, rp;
@@ -92,6 +91,12 @@ void Geometry::init_geometry() {
     std::cerr << "Failed to allocate memory for d_nnm.\n";
   }
 
+  // setting row pointers
+  for (r = 0; r < d_vol; ++r) {
+    d_nnp[r] = &d_nnp_mem[i * DIM];
+    d_nnm[r] = &d_nnm_mem[i * DIM];
+}
+
   // initializing
   for (r = 0; r < d_vol; r++) {
     lex_to_cart(cart_coord, r);
@@ -108,6 +113,7 @@ void Geometry::init_geometry() {
 
       cart_coord[i] = valuep;
       rp = cart_to_lex(cart_coord);
+
       d_nnp[r][i] = rp;
 
       valuem = value - 1;
@@ -115,9 +121,10 @@ void Geometry::init_geometry() {
       if (valuem < 0) {
         valuem += d_size[i];
       }
+
       cart_coord[i] = valuem;
       rm = cart_to_lex(cart_coord);
-      d_nnm[r][i] = rm;
+      d_nnm[r][i] = rm; // segfault
 
       cart_coord[i] = value;
     }
