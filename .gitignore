@@ -43,3 +43,4 @@ CMakeError.log
 
 # Ising specific stuff
 *.dat
+./build/*
