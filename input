@@ -1,0 +1,11 @@
+n_confs 500
+n_meas 100
+n_save 0
+seed 1234567
+start cold
+beta 0.1
+J 1.0
+updater Metropolis
+L 32
+
+
