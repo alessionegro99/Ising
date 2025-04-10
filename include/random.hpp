@@ -1,6 +1,14 @@
 #pragma once
 
-#include <iostream>
 #include <random>
 
-std::mt19937 initialize_rng(int seed);
+class Random {
+private:
+  std::mt19937 rng;
+
+public:
+  explicit Random(int seed = 0);
+
+  int uniform_int(int a, int b);
+  double uniform_double();
+};

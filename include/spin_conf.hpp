@@ -6,17 +6,21 @@
 
 #include "Z2.hpp"
 #include "parameters.hpp"
+#include "random.hpp"
 
 class Configuration {
 private:
   const Geometry &geo;
   const Simulation &sim;
 
+  Random &rng;
+
 public:
   Z2 *lattice; // [volume] lattice of Z2 spins
 
-  Configuration(const Geometry &geom, const Simulation &simul)
-      : geo(geom), sim(simul) {
+  Configuration(const Geometry &geom_ref, const Simulation &simul_ref,
+                Random &rng_ref)
+      : geo(geom_ref), sim(simul_ref), rng(rng_ref) {
     init_spin_conf();
   }
 

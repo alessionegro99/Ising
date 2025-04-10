@@ -3,6 +3,7 @@
 
 #include "../include/io.hpp"
 #include "../include/parameters.hpp"
+#include "../include/random.hpp"
 #include "../include/spin_conf.hpp"
 #include "../include/timer.hpp"
 
@@ -24,27 +25,29 @@ int main(int argc, char *argv[]) {
 
   std::string filename = argv[2];
 
-  // initialize
   Parameters params(filename);
   Geometry geo(params);
   Simulation sim(params);
+  Random rng(sim.seed);
 
   geo.print_all();
   sim.print_all();
 
-  Configuration conf(geo, sim);
+  Configuration conf(geo, sim, rng);
 
   conf.init_spin_conf();
 
   std::cout << "Starting magnetization = " << conf.magnetization(true) << "\n";
 
-  std::cout << "configuration" << " " << "magnetization" << " " << "acceptance" << "\n";
+  std::cout << "configuration" << " " << "magnetization" << " " << "acceptance"
+            << "\n";
 
   acc_rate = 0;
   for (n = 0; n <= sim.n_confs; n++) {
     acc_rate = conf.update();
     if (!(n % sim.n_meas)) {
-      std::cout << n << " " << conf.magnetization(true) << " " << acc_rate << "\n";
+      std::cout << n << " " << conf.magnetization(true) << " " << acc_rate
+                << "\n";
     }
   }
 

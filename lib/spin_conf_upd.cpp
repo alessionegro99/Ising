@@ -39,15 +39,11 @@ int Configuration::Metropolis(long r) {
     S_r += lattice[geo.nnm(r, i)].value + lattice[geo.nnp(r, i)].value;
   }
 
-  std::mt19937 rng = initialize_rng(sim.seed);
-  std::uniform_real_distribution<double> uniform(0.0, 1.0); // OUTSIDE
-
-  s_r = lattice[r].value; 
-  std::cout << boltz(2*s_r*S_r) << " " << uniform(rng) << std::endl;
+  s_r = lattice[r].value;
   if (s_r * S_r <= 0) {
     lattice[r].value *= -1;
     acc = 1;
-  } else if (uniform(rng) <= boltz(2*s_r * S_r)) {
+  } else if (rng.uniform_double() <= boltz(2 * s_r * S_r)) {
     lattice[r].value *= -1;
     acc = 1;
   }
@@ -59,14 +55,11 @@ double Configuration::update() {
 
   long r, count, acc_rate;
 
-  std::mt19937 rng = initialize_rng(sim.seed);
-  std::uniform_int_distribution<long> uniform(0, geo.d_vol - 1); // OUTSIDE
-
   acc_rate = 0;
   count = 0;
 
   for (count = 0; count < geo.d_vol; count++) {
-    r = uniform(rng);
+    r = rng.uniform_int(0, geo.d_vol - 1);
     acc_rate += Metropolis(r);
     count++;
   }
