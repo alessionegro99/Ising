@@ -5,9 +5,9 @@
 void Simulation::print_all()
 {
     std::cout << "Simulation related parameters: " << "\n";
-    std::cout << "number of configurations generated = " << n_confs << "\n";
-    std::cout << "number of configurations used for measurements = " << n_meas << "\n";
-    std::cout << "number of configurations saved = " << n_save << "\n";
+    std::cout << "number of updates = " << n_confs << "\n";
+    std::cout << "measure every = " << n_meas << "\n";
+    std::cout << "save every = " << n_save << "\n";
     std::cout << "seed = " << seed << "\n";
     std::cout << "starting condition = " << start << "\n";
     std::cout << "beta = " << beta << "\n";

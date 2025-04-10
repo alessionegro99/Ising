@@ -2,7 +2,7 @@
 
 #include "../include/spin_conf.hpp"
 
-double Configuration::magnetization(bool normalize = true) {
+double Configuration::magnetization(bool normalize) {
   double magnetization = 0.0;
   long r;
 
@@ -17,7 +17,7 @@ double Configuration::magnetization(bool normalize = true) {
   return magnetization;
 }
 
-double Configuration::energy(bool normalize = true) {
+double Configuration::energy(bool normalize) {
   double energy = 0.0;
   long r, i;
 

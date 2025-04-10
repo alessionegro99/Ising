@@ -26,9 +26,9 @@ struct Boltzmann {
   }
 };
 
-// perform one site update with metropolis
+// perform one site update with Metropolis
 // return 1 if accepted, 0 otherwise
-int Configuration::metropolis(long r) {
+int Configuration::Metropolis(long r) {
   int i, acc, s_r, S_r;
   Boltzmann boltz(sim.beta);
 
@@ -36,17 +36,18 @@ int Configuration::metropolis(long r) {
   S_r = 0;
 
   for (i = 0; i < DIM; i++) {
-    S_r += lattice[geo.nnm(r, i)].value * lattice[geo.nnp(r, i)].value;
+    S_r += lattice[geo.nnm(r, i)].value + lattice[geo.nnp(r, i)].value;
   }
 
   std::mt19937 rng = initialize_rng(sim.seed);
-  std::uniform_real_distribution<double> uniform(0.0, 1.0);
+  std::uniform_real_distribution<double> uniform(0.0, 1.0); // OUTSIDE
 
-  s_r = lattice[r].value;
-  if (s_r * S_r) {
+  s_r = lattice[r].value; 
+  std::cout << boltz(2*s_r*S_r) << " " << uniform(rng) << std::endl;
+  if (s_r * S_r <= 0) {
     lattice[r].value *= -1;
     acc = 1;
-  } else if (uniform(rng) < boltz(s_r * S_r)) {
+  } else if (uniform(rng) <= boltz(2*s_r * S_r)) {
     lattice[r].value *= -1;
     acc = 1;
   }
@@ -59,14 +60,14 @@ double Configuration::update() {
   long r, count, acc_rate;
 
   std::mt19937 rng = initialize_rng(sim.seed);
-  std::uniform_int_distribution<long> uniform(0, geo.d_vol - 1);
+  std::uniform_int_distribution<long> uniform(0, geo.d_vol - 1); // OUTSIDE
 
   acc_rate = 0;
   count = 0;
 
-  while (count < geo.d_vol) {
+  for (count = 0; count < geo.d_vol; count++) {
     r = uniform(rng);
-    acc_rate += metropolis(r);
+    acc_rate += Metropolis(r);
     count++;
   }
 

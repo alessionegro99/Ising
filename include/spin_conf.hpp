@@ -29,6 +29,6 @@ public:
   double energy(bool normalize);        // measures energy
 
   // in spin_conf_upd.cpp
-  int metropolis(long r);
+  int Metropolis(long r);
   double update();
 };
