@@ -45,3 +45,4 @@ CMakeError.log
 *.dat
 build/
 Ising.code-workspace
+CMakePresets.json
