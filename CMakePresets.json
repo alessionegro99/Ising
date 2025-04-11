@@ -10,14 +10,14 @@
             "name": "default",
             "hidden": true,
             "generator": "Unix Makefiles",
-            "binaryDir": "${sourceDir}/build/${presetName}",
+            "binaryDir": "${sourceDir}/../../build/${presetName}",
             "cacheVariables": {
                 "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
                 "DIM": "2"
             }
         },
         {
-            "name": "debug",
+            "name": "Ising_debug",
             "inherits": "default",
             "displayName": "Debug Mode",
             "cacheVariables": {
@@ -26,7 +26,7 @@
             }
         },
         {
-            "name": "release",
+            "name": "Ising",
             "inherits": "default",
             "displayName": "Release Mode",
             "cacheVariables": {
@@ -37,13 +37,13 @@
     ],
     "buildPresets": [
         {
-            "name": "debug-build",
-            "configurePreset": "debug",
+            "name": "Ising_debug",
+            "configurePreset": "Ising_debug",
             "configuration": "Debug"
         },
         {
-            "name": "release-build",
-            "configurePreset": "release",
+            "name": "Ising",
+            "configurePreset": "Ising",
             "configuration": "Release"
         }
     ]

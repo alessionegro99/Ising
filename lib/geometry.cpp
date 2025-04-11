@@ -124,7 +124,7 @@ void Geometry::init_geometry() {
 
       cart_coord[i] = valuem;
       rm = cart_to_lex(cart_coord);
-      d_nnm[r][i] = rm; // segfault
+      d_nnm[r][i] = rm;
 
       cart_coord[i] = value;
     }

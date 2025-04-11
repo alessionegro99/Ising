@@ -30,7 +30,6 @@ public:
 
   // in spin_conf_meas.cpp
   double magnetization(bool normalize); // measures magnetization
-  double energy(bool normalize);        // measures energy
 
   // in spin_conf_upd.cpp
   int Metropolis(long r);
