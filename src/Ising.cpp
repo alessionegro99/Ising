@@ -1,4 +1,4 @@
-                   #include <iomanip>
+#include <iomanip>
 #include <iostream>
 
 #include "../include/io.hpp"
@@ -10,6 +10,8 @@
 int main(int argc, char *argv[]) {
   int n;
   double acc_rate;
+  double end_time;
+  Stopwatch watch;
 
   if (argc != 3) {
     std::cerr << "Usage: " << argv[0] << " -f <filename>" << std::endl;
@@ -40,14 +42,17 @@ int main(int argc, char *argv[]) {
   std::cout << "Starting magnetization = " << conf.magnetization(true) << "\n";
 
   std::cout << "configuration" << " " << "magnetization" << " " << "acceptance"
+            << " " << "time"
             << "\n";
 
   acc_rate = 0;
   for (n = 0; n <= sim.n_confs; n++) {
+    watch.start();
     acc_rate = conf.update();
+    end_time = watch.stop();
     if (!(n % sim.n_meas)) {
-      std::cout << n << " " << conf.magnetization(true) << " " << acc_rate
-                << "\n";
+      std::cout << n << " " << std::abs(conf.magnetization(true)) << " " << acc_rate
+                << " " << end_time << "\n";
     }
   }
 
