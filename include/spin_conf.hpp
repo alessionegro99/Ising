@@ -42,7 +42,6 @@ public:
 
   // in spin_conf_upd.cpp
   int Metropolis(long r);
-  void heatbath(long r);
-  double update_Metropolis();
-  void update_heatbath();
+  int heatbath(long r);
+  double update();
 };
