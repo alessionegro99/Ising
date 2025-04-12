@@ -47,9 +47,14 @@ int main(int argc, char *argv[]) {
 
   acc_rate = 0;
   for (n = 0; n <= sim.n_confs; n++) {
+
     watch.start();
     acc_rate = conf.update();
     end_time = watch.stop();
+
+    
+
+
     if (!(n % sim.n_meas)) {
       std::cout << n << " " << std::abs(conf.magnetization(true)) << " " << acc_rate
                 << " " << end_time << "\n";

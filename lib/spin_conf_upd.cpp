@@ -5,33 +5,11 @@
 #include "../include/random.hpp"
 #include "../include/spin_conf.hpp"
 
-struct Boltzmann {
-  static constexpr int max = 4 * DIM;
-  static constexpr int num = 2 * DIM + 1;
-
-  std::array<double, num> weights;
-
-  Boltzmann(double beta) {
-    for (int i = 0; i < num; i++) {
-      int S = 4 * (i - DIM); // 0 .. (2*DIM) -> -4*DIM .. 4*DIM
-      weights[i] = exp(-beta * S);
-    }
-  }
-
-  double operator()(int S) const {
-    assert(S % 4 == 0);
-    int index = S / 4 + DIM;
-    assert(index >= 0 && index < num);
-    return weights[index];
-  }
-};
 
 // perform one site update with Metropolis
 // return 1 if accepted, 0 otherwise
 int Configuration::Metropolis(long r) {
   int i, acc, s_r, S_r;
-  Boltzmann boltz(sim.beta); // might be compuitng them every time???
-
   acc = 0;
   S_r = 0;
 
@@ -43,7 +21,7 @@ int Configuration::Metropolis(long r) {
   if (s_r * S_r <= 0) {
     lattice[r].value *= -1;
     acc = 1;
-  } else if (rng.uniform_double() <= std::exp(-2 * s_r * S_r)) {
+  } else if (rng.uniform_double() <= std::exp(-2 * sim.beta * s_r * S_r)) {
     lattice[r].value *= -1;
     acc = 1;
   }

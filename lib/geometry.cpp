@@ -22,8 +22,7 @@ void Geometry::lex_to_cart(long cart_coord[], long lex) {
   // aux[2]=size[0]*size[1]
   // ...
   // aux[STDIM-1]=size[0]*size[1]*...*size[STDIM-2]
-  for (int i = (DIM - 1); i >= 0; i--)
-  {
+  for (int i = (DIM - 1); i >= 0; i--) {
     cart_coord[i] = (int)(lex / aux[i]);
     lex -= aux[i] * cart_coord[i];
   }
@@ -93,9 +92,9 @@ void Geometry::init_geometry() {
 
   // setting row pointers
   for (r = 0; r < d_vol; ++r) {
-    d_nnp[r] = &d_nnp_mem[i * DIM];
-    d_nnm[r] = &d_nnm_mem[i * DIM];
-}
+    d_nnp[r] = &d_nnp_mem[r * DIM];
+    d_nnm[r] = &d_nnm_mem[r * DIM];
+  }
 
   // initializing
   for (r = 0; r < d_vol; r++) {
