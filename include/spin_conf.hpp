@@ -15,6 +15,14 @@ private:
 
   Random &rng;
 
+  double weights[DIM];
+
+  void init_weights() {
+    for (int i = 0; i < DIM; ++i) {
+      weights[i] = std::exp(-4 * sim.beta * (i+1));
+    }
+  }
+
 public:
   Z2 *lattice; // [volume] lattice of Z2 spins
 
@@ -22,6 +30,7 @@ public:
                 Random &rng_ref)
       : geo(geom_ref), sim(simul_ref), rng(rng_ref) {
     init_spin_conf();
+    init_weights();
   }
 
   // in spin_conf_def.cpp

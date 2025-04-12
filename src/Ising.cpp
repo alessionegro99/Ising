@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
 
   std::cout << "Starting magnetization = " << conf.magnetization(true) << "\n";
 
-  std::cout << "configuration" << " " << "magnetization" << " " << "acceptance"
+  std::cout << "configuration" << " " << "magnetization" << " " << "abs_magnetization" << " " << "acceptance"
             << " " << "time"
             << "\n";
 
@@ -52,11 +52,8 @@ int main(int argc, char *argv[]) {
     acc_rate = conf.update();
     end_time = watch.stop();
 
-    
-
-
     if (!(n % sim.n_meas)) {
-      std::cout << n << " " << std::abs(conf.magnetization(true)) << " " << acc_rate
+      std::cout << n << " " << conf.magnetization(true) << " " << std::abs(conf.magnetization(true)) << " " << acc_rate
                 << " " << end_time << "\n";
     }
   }

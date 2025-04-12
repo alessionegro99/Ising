@@ -5,11 +5,10 @@
 #include "../include/random.hpp"
 #include "../include/spin_conf.hpp"
 
-
 // perform one site update with Metropolis
 // return 1 if accepted, 0 otherwise
 int Configuration::Metropolis(long r) {
-  int i, acc, s_r, S_r;
+  int i, acc, s_r, S_r, k;
   acc = 0;
   S_r = 0;
 
@@ -18,10 +17,11 @@ int Configuration::Metropolis(long r) {
   }
 
   s_r = lattice[r].value;
-  if (s_r * S_r <= 0) {
+  k = s_r * S_r;
+  if (k <= 0) {
     lattice[r].value *= -1;
     acc = 1;
-  } else if (rng.uniform_double() <= std::exp(-2 * sim.beta * s_r * S_r)) {
+  } else if (rng.uniform_double() <= weights[k/2 - 1]) {
     lattice[r].value *= -1;
     acc = 1;
   }
