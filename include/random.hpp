@@ -10,5 +10,6 @@ public:
   explicit Random(int seed = 0);
 
   int uniform_int(int a, int b);
+  long uniform_long(long a, long b);
   double uniform_double();
 };

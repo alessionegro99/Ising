@@ -15,11 +15,11 @@ private:
 
   Random &rng;
 
-  double weights[DIM];
+  double weights_Metropolis[DIM];
 
-  void init_weights() {
+  void init_weights_Metropolis() {
     for (int i = 0; i < DIM; ++i) {
-      weights[i] = std::exp(-4 * sim.beta * (i+1));
+      weights_Metropolis[i] = std::exp(-4 * sim.beta * (i+1));
     }
   }
 
@@ -30,7 +30,7 @@ public:
                 Random &rng_ref)
       : geo(geom_ref), sim(simul_ref), rng(rng_ref) {
     init_spin_conf();
-    init_weights();
+    init_weights_Metropolis();
   }
 
   // in spin_conf_def.cpp
@@ -42,5 +42,7 @@ public:
 
   // in spin_conf_upd.cpp
   int Metropolis(long r);
-  double update();
+  void heatbath(long r);
+  double update_Metropolis();
+  void update_heatbath();
 };

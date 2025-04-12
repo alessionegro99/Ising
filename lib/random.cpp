@@ -16,6 +16,11 @@ int Random::uniform_int(int a, int b) {
   return dist(rng);
 }
 
+long Random::uniform_long(long a, long b) {
+  std::uniform_int_distribution<long> dist(a, b);
+  return dist(rng);
+}
+
 double Random::uniform_double() {
   std::uniform_real_distribution<double> dist(0.0, 1.0);
   return dist(rng);

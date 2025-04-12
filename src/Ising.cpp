@@ -9,7 +9,6 @@
 
 int main(int argc, char *argv[]) {
   int n;
-  double acc_rate;
   double end_time;
   Stopwatch watch;
 
@@ -41,20 +40,43 @@ int main(int argc, char *argv[]) {
 
   std::cout << "Starting magnetization = " << conf.magnetization(true) << "\n";
 
-  std::cout << "configuration" << " " << "magnetization" << " " << "abs_magnetization" << " " << "acceptance"
-            << " " << "time"
-            << "\n";
+  if (sim.updater == "Metropolis") {
+    double acc_rate;
 
-  acc_rate = 0;
-  for (n = 0; n <= sim.n_confs; n++) {
+    std::cout << "configuration" << " " << "magnetization" << " "
+              << "abs_magnetization" << " " << "acceptance"
+              << " " << "time"
+              << "\n";
 
-    watch.start();
-    acc_rate = conf.update();
-    end_time = watch.stop();
+    acc_rate = 0;
+    for (n = 0; n <= sim.n_confs; n++) {
 
-    if (!(n % sim.n_meas)) {
-      std::cout << n << " " << conf.magnetization(true) << " " << std::abs(conf.magnetization(true)) << " " << acc_rate
-                << " " << end_time << "\n";
+      watch.start();
+      acc_rate = conf.update_Metropolis();
+      end_time = watch.stop();
+
+      if (!(n % sim.n_meas)) {
+        std::cout << n << " " << conf.magnetization(true) << " "
+                  << std::abs(conf.magnetization(true)) << " " << acc_rate
+                  << " " << end_time << "\n";
+      }
+    }
+  } else if (sim.updater == "heatbath") {
+    std::cout << "configuration" << " " << "magnetization" << " "
+              << "abs_magnetization" << " " << "time"
+              << "\n";
+
+    for (n = 0; n <= sim.n_confs; n++) {
+
+      watch.start();
+      conf.update_heatbath();
+      end_time = watch.stop();
+
+      if (!(n % sim.n_meas)) {
+        std::cout << n << " " << conf.magnetization(true) << " "
+                  << std::abs(conf.magnetization(true)) << " " << end_time
+                  << "\n";
+      }
     }
   }
 
