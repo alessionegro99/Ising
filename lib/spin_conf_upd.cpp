@@ -1,6 +1,7 @@
 #include <array>
 #include <cassert>
 #include <cmath>
+#include <omp.h>
 
 #include "../include/random.hpp"
 #include "../include/spin_conf.hpp"
@@ -56,17 +57,19 @@ int Configuration::heatbath(long r) {
 
 // perform a complete update
 double Configuration::update() {
-  long r, count, acc_rate;
+  long r, acc_rate;
 
   acc_rate = 0;
-  count = 0;
 
-  for (count = 0; count < geo.d_vol; count++) {
-    r = rng.uniform_long(0, geo.d_vol - 1);
-    if (sim.updater == "Metropolis")
-      acc_rate += Metropolis(r);
-    else if (sim.updater == "heatbath")
-      acc_rate += heatbath(r);
+  omp_set_num_threads(2);
+
+#pragma omp parallel for private(r) reduction(+ : acc_rate)
+  for (r = 0; r < geo.d_vol / 2; r++) {
+    acc_rate += heatbath(r);
+  }
+#pragma omp parallel for private(r) reduction(+ : acc_rate)
+  for (r = geo.d_vol; r < geo.d_vol; r++) {
+    acc_rate += heatbath(r);
   }
 
   return (double)acc_rate * (double)geo.d_inv_vol;

@@ -72,36 +72,3 @@ public:
 
   void print_all();
 };
-
-// in Geometry.cpp
-class Geometry {
-public:
-  const size_t L; // extent of the lattice
-
-  int d_size[DIM]; // size of the lattice
-
-  long d_vol;       // total volume
-  double d_inv_vol; // 1/(total volume)
-
-  long *d_nnp_mem;
-  long *d_nnm_mem;
-
-  long **d_nnp; // d_nnp[r][i] = next neighbour (on the local lattice) in dir
-                // +i of site r
-  long **d_nnm; // d_nnm[r][i] = next neighbour (on the local lattice) in dir
-                // -i of site r
-
-  explicit Geometry(const Parameters &params) : L(params.get_int("L")) {
-    init_geometry();
-  }
-
-  inline long nnp(long r, int i) const { return d_nnp[r][i]; }
-  inline long nnm(long r, int i) const { return d_nnm[r][i]; }
-
-  void lex_to_cart(long cart_coord[], long lex);
-  int cart_to_lex(long cart_coord[]);
-
-  void print_all();
-  void init_geometry();
-  void free_geometry();
-};

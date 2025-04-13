@@ -6,6 +6,7 @@
 
 #include "Z2.hpp"
 #include "parameters.hpp"
+#include "geometry.hpp"
 #include "random.hpp"
 
 class Configuration {
