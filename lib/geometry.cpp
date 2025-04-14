@@ -2,6 +2,17 @@
 
 #include "../include/geometry.hpp"
 
+// cartesian coordinates -> single index
+long (Geometry::*cart_to_si)(int const *const cart_coord) const =
+    &Geometry::cart_to_lexeo;
+// single index -> cartesian coordinates
+void (Geometry::*si_to_cart)(int *cart_coord,
+                             long si) const = &Geometry::lexeo_to_cart;
+// lexicographic -> single index
+long (Geometry::*lex_to_si)(long lex) const = &Geometry::lex_to_lexeo;
+// single_index -> lexicographic index
+long (Geometry::*si_to_lex)(long si) const = &Geometry::lexeo_to_lex;
+
 void Geometry::print_all() {
   std::cout << "Geometry related parameters: " << "\n";
   std::cout << "dimension DIM = " << DIM << "\n";
@@ -60,9 +71,11 @@ void Geometry::init_geometry() {
 
   // initializing
   for (r = 0; r < d_vol; r++) {
-    si_to_cart(cart_coord, r);
+
+    (this->*si_to_cart)(cart_coord, r);
 
     for (i = 0; i < DIM; i++) {
+
       value = cart_coord[i];
 
       valuep = value + 1;
@@ -73,7 +86,8 @@ void Geometry::init_geometry() {
       }
 
       cart_coord[i] = valuep;
-      rp = cart_to_si(cart_coord);
+
+      rp = (this->*cart_to_si)(cart_coord);
 
       d_nnp[r][i] = rp;
 
@@ -84,7 +98,7 @@ void Geometry::init_geometry() {
       }
 
       cart_coord[i] = valuem;
-      rm = cart_to_si(cart_coord);
+      rm = (this->*cart_to_si)(cart_coord);
       d_nnm[r][i] = rm;
 
       cart_coord[i] = value;
@@ -99,17 +113,6 @@ void Geometry::free_geometry() {
   delete[] d_nnm;
   delete[] d_nnm_mem;
 }
-
-// cartesian coordinates -> single index
-long (Geometry::*cart_to_si)(int const *const cartcoord) const =
-    &Geometry::cart_to_lexeo;
-// single index -> cartesian coordinates
-void (Geometry::*si_to_cart)(int *cartcoord,
-                             long si) const = &Geometry::lexeo_to_cart;
-// lexicographic -> single index
-long (Geometry::*lex_to_si)(long lex) const = &Geometry::lex_to_lexeo;
-// single_index -> lexicographic index
-long (Geometry::*si_to_lex)(long si) const = &Geometry::lexeo_to_lex;
 
 //----------- these are not to be used outside geometry.c-------------
 
@@ -185,6 +188,7 @@ void Geometry::lexeo_to_cart(int *cart_coord, long lexeo) const {
     } else {
       lex = 2 * (lexeo - d_vol / 2);
     }
+
     lex_to_cart(cart_coord, lex);
 
     eo = 0;

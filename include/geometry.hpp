@@ -18,9 +18,14 @@ public:
   long **d_nnp; // d_nnp[r][i] = next neighbour (on the local lattice) in dir
                 // +i of site r
   long **d_nnm; // d_nnm[r][i] = next neighbour (on the local lattice) in dir
-                // -i of site r
+  // -i of site r
 
   explicit Geometry(const Parameters &params) : L(params.get_int("L")) {
+    cart_to_si = &Geometry::cart_to_lexeo;
+    si_to_cart = &Geometry::lexeo_to_cart;
+    lex_to_si = &Geometry::lex_to_lexeo;
+    si_to_lex = &Geometry::lexeo_to_lex;
+
     init_geometry();
   }
 
@@ -29,20 +34,20 @@ public:
   // next neighbour in - direction
   inline long nnm(long r, int i) const { return d_nnm[r][i]; }
 
+  // these are the functions to be used in switching between differend indices
+  // cartesian coordinates -> single index
+  long (Geometry::*cart_to_si)(int const *const cart_coord) const;
+  // single index -> cartesian coordinates
+  void (Geometry::*si_to_cart)(int *cart_coord, long si) const;
+  // lexicographic -> single index
+  long (Geometry::*lex_to_si)(long lex) const;
+  // single index -> lexicographic
+  long (Geometry::*si_to_lex)(long si) const;
+
   // general functions
   void print_all();
   void init_geometry();
   void free_geometry();
-
-  // these are the functions to be used in switching between differend indices
-  // cartesian coordinates -> single index
-  long (*cart_to_si)(int const *const cartcoord);
-  // single index -> cartesian coordinates
-  void (*si_to_cart)(int *cartcoord, long si);
-  // lexicographic -> single index
-  long (*lex_to_si)(long lex);
-  // single index -> lexicographic
-  long (*si_to_lex)(long si);
 
   //----------- these are not to be used outside geometry.c-------------
 

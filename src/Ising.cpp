@@ -29,6 +29,7 @@ int main(int argc, char *argv[]) {
   Parameters params(filename);
   Geometry geo(params);
   Simulation sim(params);
+
   Random rng(sim.seed);
 
   geo.print_all();

@@ -61,14 +61,12 @@ double Configuration::update() {
 
   acc_rate = 0;
 
-  omp_set_num_threads(2);
-
 #pragma omp parallel for private(r) reduction(+ : acc_rate)
   for (r = 0; r < geo.d_vol / 2; r++) {
     acc_rate += heatbath(r);
   }
 #pragma omp parallel for private(r) reduction(+ : acc_rate)
-  for (r = geo.d_vol; r < geo.d_vol; r++) {
+  for (r = geo.d_vol / 2; r < geo.d_vol; r++) {
     acc_rate += heatbath(r);
   }
 
