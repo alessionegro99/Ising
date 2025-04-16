@@ -2,6 +2,10 @@
 
 #include "parameters.hpp"
 
+#ifndef DIM
+#define DIM 3
+#endif
+
 // in Geometry.cpp
 class Geometry {
 public:

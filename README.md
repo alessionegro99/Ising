@@ -1,4 +1,4 @@
 TODO:
 
 - Add lookup table for the heatbath
-- fix segfault
+- add thread safe random numbers
