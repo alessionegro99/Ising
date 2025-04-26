@@ -4,7 +4,7 @@
 #define DIM 2
 #define UPDATER 0
 
-#define OMP_MODE 0
+#define OMP_MODE 1
 
 #if OMP_MODE == 1
 #include <omp.h>

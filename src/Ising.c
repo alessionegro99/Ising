@@ -13,11 +13,14 @@
 int main(int argc, char **argv) {
   int i, aux;
   long n;
-  double acc, m, e;
+  double acc, m, e, elapsed;
 
   Geometry geo;
   Spin_Conf SC;
   Params params;
+
+  struct timespec start, end;
+
 
   if (argc != (7 + DIM)) {
     fprintf(stdout, "How to use this program:\n");
@@ -89,13 +92,17 @@ int main(int argc, char **argv) {
   }
 
   for (n = 0; n <= params.d_sample; n++) {
+    clock_gettime(CLOCK_MONOTONIC, &start);
     acc = update(&SC, &geo);
+    clock_gettime(CLOCK_MONOTONIC, &end);
+
+    elapsed = (double)(end.tv_sec - start.tv_sec) + (double)(end.tv_nsec - start.tv_nsec) / 1e9;
 
     if (n % params.d_measevery == 0) {
       m = magn(&SC, &geo);
       e = energy(&SC, &geo);
 
-      fprintf(fp, "%f %.12f %.12f\n", acc, fabs(m), e);
+      fprintf(fp, "%f %f %.12f %.12f\n", acc, elapsed, fabs(m), e);
     }
   }
 
