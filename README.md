@@ -24,4 +24,4 @@ OMP_MODE:
 
 0 $\rightarrow$ inactive
 
-1 $\rightarrow$ active with NTHREADS OpenMP threads
+1 $\rightarrow$ active with NTHREADS OpenMP threads (not yet supported)
