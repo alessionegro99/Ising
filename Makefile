@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -O3 -Wall -Wextra -Werror -pedantic -Wconversion -std=c99
+CFLAGS = -O3 -Wall -Wextra -Werror -pedantic -Wconversion -std=c99 -fopenmp
 INCLUDES = -Iinclude
 
 # Source and object files

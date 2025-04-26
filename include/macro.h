@@ -4,6 +4,13 @@
 #define DIM 2
 #define UPDATER 0
 
+#define OMP_MODE 0
+
+#if OMP_MODE == 1
+#include <omp.h>
+#define NTHREADS 2
+#endif
+
 #define MIN(A,B) (((A)<(B))?(A):(B))
 #define MAX(A,B) (((A)>(B))?(A):(B))
 

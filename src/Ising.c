@@ -70,10 +70,6 @@ int main(int argc, char **argv) {
       params.d_insize[i] = aux;
   }
 
-  printf("%.12f %ld %ld %ld %s %d\n", params.d_beta, params.d_sample,
-         params.d_measevery, params.d_randseed, params.d_data_file,
-         params.d_start);
-
   myrand_init(params.d_randseed, params.d_randseed + 127);
 
   init_geometry(&geo, params.d_insize);
@@ -99,7 +95,7 @@ int main(int argc, char **argv) {
       m = magn(&SC, &geo);
       e = energy(&SC, &geo);
 
-      fprintf(fp, "%f %.12f %.12f\n", acc, m, e);
+      fprintf(fp, "%f %.12f %.12f\n", acc, fabs(m), e);
     }
   }
 

@@ -33,12 +33,22 @@ double update(Spin_Conf *SC, Geometry const *const geo) {
   long r, raux, acc_rate;
 
   acc_rate = 0;
-  for (r = 0; r < geo->d_volume; r++) {
-    raux = (long)((double)geo->d_volume * myrand());
-#if UPDATER == 0
-    acc_rate += Metropolis(SC, geo, raux);
+
+#if OMP_MODE == 1
+#pragma omp parallel for num_threads(NTHREADS) private(r, raux) reduction(+:acc_rate)
 #endif
-  }
+for (r = 0; r < (geo->d_volume)/2; r++) {
+  raux = (long)((double)(geo->d_volume/2) * myrand());
+  acc_rate += Metropolis(SC, geo, raux);
+}
+
+#if OMP_MODE == 1
+#pragma omp parallel for num_threads(NTHREADS) private(r, raux) reduction(+:acc_rate)
+#endif
+for (r = (geo->d_volume)/2; r < geo->d_volume; r++) {
+  raux = (geo->d_volume)/2 + (long)((double)(geo->d_volume/2) * myrand());
+  acc_rate += Metropolis(SC, geo, raux);
+}
 
   return (double)acc_rate * (double)geo->d_inv_vol;
 }
