@@ -10,7 +10,7 @@ int Metropolis(Spin_Conf *SC, Geometry const *const geo, long r) {
 
   S_r = 0;
   for (i = 0; i < DIM; i++) {
-    S_r += SC->lattice[nnp(geo, r, i)];
+    S_r += SC->lattice[nnp(geo, r, i)]; //
     S_r += SC->lattice[nnm(geo, r, i)];
   }
 
