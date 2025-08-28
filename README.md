@@ -6,9 +6,9 @@ $$E[s]=-\sum_{\langle \textbf{x} \textbf{y}\rangle}s_{\textbf{x}} s_{\textbf{y}}
 # How to use
 The compilation is done as usual by make.
 
-Run the binary with ./Ising to display a helper message to start your simulations.
+Run the binary with `./Ising` to display a helper message to start your simulations.
 
-Some macros can be manually modified in include/macro.h:
+Some macros can be manually modified in `include/macro.h`:
 
 DIM $\rightarrow$ dimension of the problem 
 
@@ -24,4 +24,4 @@ OMP_MODE:
 
 0 $\rightarrow$ inactive
 
-1 $\rightarrow$ active with NTHREADS OpenMP threads
+1 $\rightarrow$ active with NTHREADS OpenMP threads (not yet supported)
