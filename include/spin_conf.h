@@ -24,6 +24,8 @@ double energy(Spin_Conf const *const SC, Geometry const *const geo);
 
 // in spin_conf_upd.c
 int Metropolis(Spin_Conf *SC, Geometry const *const geo, long r);
-double update(Spin_Conf *SC, Geometry const *const geo);
+double update_Metropolis(Spin_Conf *SC, Geometry const *const geo);
+void heatbath(Spin_Conf *SC, Geometry const *const geo, long r);
+void update_heatbath(Spin_Conf *SC, Geometry const *const geo);
 
 #endif

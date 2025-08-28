@@ -2,7 +2,7 @@
 #define MACRO_H
 
 #define DIM 2
-#define UPDATER 0
+#define UPDATER 1
 
 #define MIN(A,B) (((A)<(B))?(A):(B))
 #define MAX(A,B) (((A)>(B))?(A):(B))

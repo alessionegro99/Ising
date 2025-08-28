@@ -26,7 +26,7 @@ void init_spin_conf(Spin_Conf *SC, Geometry const *const geo,
       SC->lattice[r] = 1;
     }
   }
-  if (param->d_start == 1) // random start (todo: add rand {-1, 1})
+  if (param->d_start == 1) // random start 
   {
     for (r = 0; r < (geo->d_volume); r++) {
       if (myrand() >= 0.5)

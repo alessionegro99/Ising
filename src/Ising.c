@@ -13,7 +13,10 @@
 int main(int argc, char **argv) {
   int i, aux;
   long n;
-  double acc, m, e;
+  double m, e;
+#if UPDATER == 0
+  double acc;
+#endif
 
   Geometry geo;
   Spin_Conf SC;
@@ -31,11 +34,12 @@ int main(int argc, char **argv) {
     fprintf(stdout, "  measevery = measure every measevery updates\n");
     fprintf(stdout, "  seed = seed for reproducibility\n");
     fprintf(stdout,
-            "  datafile = name of the file on which to write the data\n\n");
+            "  datafile = name of the file on which to write the data\n");
     fprintf(stdout, "  Li = linear size of the lattice in direction i "
-                    "(dimension defined by macro)\n");
+                    "(dimension defined by macro)\n\n");
     fprintf(stdout, "Compiled for:\n");
-    fprintf(stdout, "  dimensionality = %d\n\n", DIM);
+    fprintf(stdout, "  dimensionality = %d\n", DIM);
+    fprintf(stdout, "  updater = %d\n\n", UPDATER);
     fprintf(stdout, "Output:\n");
     fprintf(stdout,
             "configuration_number magnetization energy acceptance_rate\n");
@@ -84,18 +88,33 @@ int main(int argc, char **argv) {
     return EXIT_FAILURE;
   }
 
+#if UPDATER == 0
   for (i = 0; i <= 2 * DIM; i++) {
     SC.weights[i] = exp(-2.0 * params.d_beta * ((double)(2 * (i - DIM))));
   }
+#elif UPDATER == 1
+  for (i = 0; i <= 2 * DIM; i++) {
+    SC.weights[i] =
+        1.0 / (exp(-2.0 * params.d_beta * (double)(2 * (i - DIM))) + 1.0);
+  }
+#endif
 
   for (n = 0; n <= params.d_sample; n++) {
-    acc = update(&SC, &geo);
+#if UPDATER == 0
+    acc = update_Metropolis(&SC, &geo);
+#elif UPDATER == 1
+    update_heatbath(&SC, &geo);
+#endif
 
     if (n % params.d_measevery == 0) {
-      m = magn(&SC, &geo);
+      m = fabs(magn(&SC, &geo));
       e = energy(&SC, &geo);
 
+#if UPDATER == 0
       fprintf(fp, "%f %.12f %.12f\n", acc, m, e);
+#elif UPDATER == 1
+      fprintf(fp, "%.12f %.12f\n", m, e);
+#endif
     }
   }
 
