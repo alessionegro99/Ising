@@ -13,6 +13,7 @@ typedef struct Params {
   // simulation details
   long d_sample;
   long d_measevery;
+  double P_add;
 
   // initialization & saving
   int d_start;

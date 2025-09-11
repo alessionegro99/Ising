@@ -27,5 +27,7 @@ int Metropolis(Spin_Conf *SC, Geometry const *const geo, long r);
 double update_Metropolis(Spin_Conf *SC, Geometry const *const geo);
 void heatbath(Spin_Conf *SC, Geometry const *const geo, long r);
 void update_heatbath(Spin_Conf *SC, Geometry const *const geo);
+void update_single_cluster(Spin_Conf *SC, Geometry const *const geo,
+                           Params const *const param, long *cluster, long r);
 
 #endif
