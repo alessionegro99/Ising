@@ -1,9 +1,9 @@
 CC = gcc
-CFLAGS = -O3 -Wall -Wextra -Werror -pedantic -Wconversion -std=c99
+CFLAGS = -O2 -Wall -Wextra -Werror -pedantic -Wconversion -std=c99
 INCLUDES = -Iinclude
 
 # Source and object files
-LIB_SOURCES = lib/geometry.c lib/pcg32min.c lib/random.c lib/spin_conf_def.c lib/spin_conf_meas.c lib/spin_conf_upd.c
+LIB_SOURCES = lib/geometry.c lib/param.c lib/pcg32min.c lib/random.c lib/spin_conf_def.c lib/spin_conf_meas.c lib/spin_conf_upd.c
 LIB_OBJECTS = $(LIB_SOURCES:.c=.o)
 
 SRC_SOURCES = src/Ising.c
@@ -28,6 +28,6 @@ src/%.o: src/%.c
 
 # Clean up build files
 clean:
-	rm -f $(LIB_OBJECTS) $(SRC_OBJECTS) $(TARGET)
+	rm -f $(LIB_OBJECTS) $(SRC_OBJECTS) $(TARGET) dati.dat log.dat template_input.in
 
 .PHONY: all clean

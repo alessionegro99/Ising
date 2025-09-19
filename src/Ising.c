@@ -1,3 +1,6 @@
+#ifndef ISING_C
+#define ISING_C
+
 #include "macro.h"
 
 #include <math.h>
@@ -10,118 +13,131 @@
 #include "../include/random.h"
 #include "../include/spin_conf.h"
 
-int main(int argc, char **argv) {
-  int i, aux;
-  long n;
-  double m, e;
-#if UPDATER == 0
-  double acc;
-#endif
-
-  Geometry geo;
+void real_main(char *in_file) {
   Spin_Conf SC;
+  Geometry geo;
   Params params;
 
-  if (argc != (7 + DIM)) {
-    fprintf(stdout, "How to use this program:\n");
-    fprintf(
-        stdout,
-        "  %s beta start sample measevery seed datafile L0 L1 ... LDIM-1 \n\n",
-        argv[0]);
-    fprintf(stdout, "  beta = inverse temperature\n");
-    fprintf(stdout, "  start = 0 ordered 1 disordered\n");
-    fprintf(stdout, "  sample = number of draws to be extracted\n");
-    fprintf(stdout, "  measevery = measure every measevery updates\n");
-    fprintf(stdout, "  seed = seed for reproducibility\n");
-    fprintf(stdout,
-            "  datafile = name of the file on which to write the data\n");
-    fprintf(stdout, "  Li = linear size of the lattice in direction i "
-                    "(dimension defined by macro)\n\n");
-    fprintf(stdout, "Compiled for:\n");
-    fprintf(stdout, "  dimensionality = %d\n", DIM);
-    fprintf(stdout, "  updater = %d\n\n", UPDATER);
-    fprintf(stdout, "Output:\n");
-    fprintf(stdout,
-            "configuration_number magnetization energy acceptance_rate\n");
+  int count;
+  FILE *datafile;
+  time_t time1, time2;
 
-    return EXIT_SUCCESS;
-  }
+  // read input file
+  readinput(in_file, &params);
 
-  params.d_beta = atof(argv[1]);
-  params.d_start = atoi(argv[2]);
+  // initialize random generator
+  myrand_init(&params);
 
-  params.d_sample = atol(argv[3]);
-  params.d_measevery = atoi(argv[4]);
+  // open data_file
+  init_data_file(&datafile, &params);
 
-  params.d_randseed = (unsigned long int)atol(argv[5]);
-
-  if (strlen(argv[6]) >= STD_STRING_LENGTH) {
-    fprintf(stderr,
-            "File name too long. Increse STRING_LENGTH or shorten the name "
-            "(%d)\n",
-            __LINE__);
-    return EXIT_FAILURE;
-  } else {
-    strcpy(params.d_data_file, argv[6]);
-  }
-
-  for (i = 0; i < DIM; i++) {
-    aux = atoi(argv[7 + i]);
-    if (aux <= 0) {
-      fprintf(stderr, "L in direction %d must be strictly positive!\n", i);
-      return EXIT_FAILURE;
-    } else
-      params.d_insize[i] = aux;
-  }
-
-  myrand_init(params.d_randseed, params.d_randseed + 127);
-
+  // initialize geometry
   init_geometry(&geo, params.d_insize);
+
+  // initialize spin configuration
   init_spin_conf(&SC, &geo, &params);
 
+  long *cluster;
+  int err = posix_memalign((void **)&cluster, INT_ALIGN,
+                           (size_t)geo.d_volume * sizeof(double long));
+
+  if (err != 0) {
+    fprintf(stderr, "Problems in allocating a vector (%s, %d)\n", __FILE__,
+            __LINE__);
+    exit(EXIT_FAILURE);
+  }
+
+  // montecarlo start
+  time(&time1);
+  for (count = 1; count < params.d_sample + 1; count++) {
+    // update
+    if (params.d_updater == 0) {
+      update_Metropolis(&SC, &geo, &params);
+    } else if (params.d_updater == 1) {
+      update_heatbath(&SC, &geo);
+    } else if (params.d_updater == 2) {
+      update_single_cluster(&SC, &geo, &params, cluster);
+    }
+
+    if (count % params.d_measevery == 0) {
+      // measure
+      perform_measures(&SC, &geo, &params, datafile);
+    }
+  }
+  time(&time2);
+  // montecarlo end
+
+  // close data file
+  fclose(datafile);
+
+  // print simulation details
+  print_parameters_local(&params, time1, time2);
+
+  // free spin configuration
+  free_spin_conf(&SC);
+
+  // free gauge configuration
+  free_geometry(&geo);
+
+  // free cluster vector
+  free(cluster);
+}
+
+void print_template_input(void) {
   FILE *fp;
 
-  fp = fopen(params.d_data_file, "w");
+  fp = fopen("template_input.in", "w");
+
   if (fp == NULL) {
-    fprintf(stderr, "Error in opening the file %s (%d)", params.d_data_file,
-            __LINE__);
-    return EXIT_FAILURE;
+    fprintf(stderr, "Error in opening the file template_input.in (%s, %d)\n",
+            __FILE__, __LINE__);
+    exit(EXIT_FAILURE);
+  } else {
+    fprintf(fp, "size 16 16\n");
+    fprintf(fp, "\n");
+    fprintf(fp, "beta 0.42\n");
+    fprintf(fp, "\n");
+    fprintf(fp, "sample    10\n");
+    fprintf(fp, "measevery 5\n");
+    fprintf(fp, "updater 2 # 0=Metropolis 1=heat-bath 2=single cluster\n");
+    fprintf(fp, "\n");
+    fprintf(fp, "start                   0  # 0=ordered  1=random\n");
+    fprintf(fp, "\n");
+    fprintf(fp, "#output files\n");
+    fprintf(fp, "data_file  dati.dat\n");
+    fprintf(fp, "log_file   log.dat\n");
+    fprintf(fp, "\n");
+    fprintf(fp, "randseed 0    #(0=time)\n");
+    fclose(fp);
   }
+}
 
-#if UPDATER == 0
-  for (i = 0; i <= 2 * DIM; i++) {
-    SC.weights[i] = exp(-2.0 * params.d_beta * ((double)(2 * (i - DIM))));
-  }
-#elif UPDATER == 1
-  for (i = 0; i <= 2 * DIM; i++) {
-    SC.weights[i] =
-        1.0 / (exp(-2.0 * params.d_beta * (double)(2 * (i - DIM))) + 1.0);
-  }
-#endif
+int main(int argc, char **argv) {
+  char in_file[50];
 
-  for (n = 0; n <= params.d_sample; n++) {
-#if UPDATER == 0
-    acc = update_Metropolis(&SC, &geo);
-#elif UPDATER == 1
-    update_heatbath(&SC, &geo);
-#endif
+  if (argc != 2) {
+    printf("Alessio Negro %s\n", PACKAGE_BUGREPORT);
+    printf("Usage: %s input_file\n\n", argv[0]);
 
-    if (n % params.d_measevery == 0) {
-      m = fabs(magn(&SC, &geo));
-      e = energy(&SC, &geo);
+    printf("Compilation details:\n");
+    printf("\tINT_ALIGN: %s\n", QUOTEME(INT_ALIGN));
 
-#if UPDATER == 0
-      fprintf(fp, "%f %.12f %.12f\n", acc, m, e);
-#elif UPDATER == 1
-      fprintf(fp, "%.12f %.12f\n", m, e);
-#endif
+    print_template_input();
+
+    return EXIT_SUCCESS;
+  } else {
+    if (strlen(argv[1]) >= STD_STRING_LENGTH) {
+      fprintf(
+          stderr,
+          "File name too long. Increse STD_STRING_LENGTH in include/macro.h\n");
+    } else {
+      strcpy(in_file, argv[1]);
     }
   }
 
-  fclose(fp);
-
-  free_spin_conf(&SC);
-  free_geometry(&geo);
+  real_main(in_file);
 
   return EXIT_SUCCESS;
 }
+
+#endif

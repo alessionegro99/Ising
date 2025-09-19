@@ -1,13 +1,16 @@
+#ifndef SPIN_CONF_DEF_C
+#define SPIN_CONF_DEF_C
 #include "../include/macro.h"
 
 #include <stdlib.h>
+#include <math.h>
 
-#include "../include/random.h"
 #include "../include/params.h"
+#include "../include/random.h"
 #include "../include/spin_conf.h"
 
 void init_spin_conf(Spin_Conf *SC, Geometry const *const geo,
-                    Params const *const param) {
+                    Params const *const params) {
   long r;
   int err;
 
@@ -20,13 +23,13 @@ void init_spin_conf(Spin_Conf *SC, Geometry const *const geo,
   }
 
   // initialize lattice
-  if (param->d_start == 0) // ordered start
+  if (params->d_start == 0) // ordered start
   {
     for (r = 0; r < (geo->d_volume); r++) {
       SC->lattice[r] = 1;
     }
   }
-  if (param->d_start == 1) // random start 
+  if (params->d_start == 1) // random start
   {
     for (r = 0; r < (geo->d_volume); r++) {
       if (myrand() >= 0.5)
@@ -35,6 +38,21 @@ void init_spin_conf(Spin_Conf *SC, Geometry const *const geo,
         SC->lattice[r] = -1;
     }
   }
+
+  int i;
+
+  // initializing weights
+  if (params->d_updater == 0) {
+    for (i = 0; i <= 2 * DIM; i++) {
+      SC->weights[i] = exp(-2.0 * params->d_beta * ((double)(2 * (i - DIM))));
+    }
+  } else if (params->d_updater == 1) {
+    for (i = 0; i <= 2 * DIM; i++) {
+      SC->weights[i] =
+          1.0 / (exp(-2.0 * params->d_beta * (double)(2 * (i - DIM))) + 1.0);
+    }
+  }
 }
 
 void free_spin_conf(Spin_Conf *SC) { free(SC->lattice); }
+#endif

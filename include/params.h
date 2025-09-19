@@ -3,6 +3,9 @@
 
 #include "macro.h"
 
+#include <stdio.h>
+#include <time.h>
+
 typedef struct Params {
   // lattice dimensions
   int d_insize[DIM];
@@ -13,15 +16,14 @@ typedef struct Params {
   // simulation details
   long d_sample;
   long d_measevery;
-  double P_add;
+  int d_updater;
+  double d_padd;
+  double d_acc;
 
   // initialization & saving
   int d_start;
-  int d_saveconf_back_every;
-  int d_saveconf_analysis_every;
 
   // output file names
-  char d_conf_file[STD_STRING_LENGTH];
   char d_data_file[STD_STRING_LENGTH];
   char d_log_file[STD_STRING_LENGTH];
 
@@ -29,5 +31,12 @@ typedef struct Params {
   unsigned long int d_randseed;
 
 } Params;
+
+void remove_white_lines_and_comments(FILE *input);
+void readinput(char *in_file, Params *params);
+
+void init_data_file(FILE **dataf, Params const *const params);
+void print_parameters_local(Params const *const params, time_t time_start,
+                            time_t time_end);
 
 #endif

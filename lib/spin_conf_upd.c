@@ -1,3 +1,5 @@
+#ifndef SPIN_CONF_UPD_C
+#define SPIN_CONF_UPD_C
 #include "../include/macro.h"
 
 #include "../include/random.h"
@@ -29,7 +31,8 @@ int Metropolis(Spin_Conf *SC, Geometry const *const geo, long r) {
 }
 
 // perform a complete update with Metropolis
-double update_Metropolis(Spin_Conf *SC, Geometry const *const geo) {
+void update_Metropolis(Spin_Conf *SC, Geometry const *const geo,
+                       Params *params) {
   long r, raux, acc_rate;
 
   acc_rate = 0;
@@ -38,7 +41,7 @@ double update_Metropolis(Spin_Conf *SC, Geometry const *const geo) {
     acc_rate += Metropolis(SC, geo, raux);
   }
 
-  return (double)acc_rate * (double)geo->d_inv_vol;
+  params->d_acc = (double)acc_rate * (double)geo->d_inv_vol;
 }
 
 // perform one site update with the heatbath algorithm
@@ -70,8 +73,8 @@ void update_heatbath(Spin_Conf *SC, Geometry const *const geo) {
 }
 
 // build a cluster of neighbouring spins with the same orientation
-void update_single_cluster(Spin_Conf *SC, Geometry const *const geo,
-                           Params const *const param, long *cluster,  long r) {
+void single_cluster(Spin_Conf *SC, Geometry const *const geo,
+                    Params const *const params, long *cluster, long r) {
   long x;
   int n_old, n_new, l_c, s_x, s_r;
 
@@ -88,11 +91,11 @@ void update_single_cluster(Spin_Conf *SC, Geometry const *const geo,
       int i;
 
       for (i = 0; i < DIM; i++) {
-        int j;
-        int flag;
+        int j, flag;
+
+        flag = 0;
 
         x = nnp(geo, r, i);
-        flag = 0;
 
         for (j = 0; j < l_c; j++) {
           if (cluster[j] == x) {
@@ -100,17 +103,38 @@ void update_single_cluster(Spin_Conf *SC, Geometry const *const geo,
             break;
           }
         }
-        s_x = SC->lattice[x];
-        if (s_x == s_r) {
-          if (my_rand() < param->P_add) {
-            cluster[l_c] = x;
+        if (flag == 0) {
+          s_x = SC->lattice[x];
+          if (s_x == s_r) {
+            if (myrand() < params->d_padd) {
+              cluster[l_c] = x;
+            }
+          }
+        }
+
+        flag = 0;
+
+        x = nnm(geo, r, i);
+
+        for (j = 0; j < l_c; j++) {
+          if (cluster[j] == x) {
+            flag = 1;
+            break;
+          }
+        }
+        if (flag == 0) {
+          s_x = SC->lattice[x];
+          if (s_x == s_r) {
+            if (myrand() < params->d_padd) {
+              cluster[l_c] = x;
+            }
           }
         }
       }
     }
+    n_old = n_new;
+    n_new = l_c;
   }
-  n_old = n_new;
-  n_new = l_c;
 
   int i;
   for (i = 0; i < l_c; i++) {
@@ -118,3 +142,15 @@ void update_single_cluster(Spin_Conf *SC, Geometry const *const geo,
     SC->lattice[x] *= -1;
   }
 }
+
+// performs update with single cluster
+void update_single_cluster(Spin_Conf *SC, Geometry const *const geo,
+                           Params const *const params, long *cluster) {
+  long r;
+
+  r = (long)((double)geo->d_volume * myrand());
+
+  single_cluster(SC, geo, params, cluster, r);
+}
+
+#endif
