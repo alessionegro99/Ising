@@ -3,8 +3,6 @@
 
 #include "../include/macro.h"
 
-#include <math.h>
-
 #include "../include/spin_conf.h"
 
 // magnetization per site
@@ -38,7 +36,7 @@ void perform_measures(Spin_Conf const *const SC, Geometry const *const geo,
                       Params const *const params, FILE *datafile) {
   double mag, ener;
 
-  mag = fabs(magn(SC, geo));
+  mag = magn(SC, geo);
   ener = energy(SC, geo);
 
   fprintf(datafile, "%.12g %.12g", mag, ener);
