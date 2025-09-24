@@ -120,6 +120,7 @@ int main(int argc, char **argv) {
     printf("Usage: %s input_file\n\n", argv[0]);
 
     printf("Compilation details:\n");
+    printf("\tDIM: %s\n", QUOTEME(DIM));
     printf("\tINT_ALIGN: %s\n", QUOTEME(INT_ALIGN));
 
     print_template_input();
