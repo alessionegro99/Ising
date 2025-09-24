@@ -239,7 +239,8 @@ void print_parameters_local(Params const *const params, time_t time_start,
   fprintf(fp, "measevery: %ld\n", params->d_measevery);
   fprintf(fp, "\n");
 
-  fprintf(fp, "start:                   %d\n", params->d_start);
+  fprintf(fp, "start: %d\n", params->d_start);
+  fprintf(fp, "updater: %d\n", params->d_updater);
   fprintf(fp, "\n");
 
   fprintf(fp, "randseed: %lu\n", params->d_randseed);

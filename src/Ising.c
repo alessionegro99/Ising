@@ -54,7 +54,7 @@ void real_main(char *in_file) {
     if (params.d_updater == 0) {
       update_Metropolis(&SC, &geo, &params);
     } else if (params.d_updater == 1) {
-      update_heatbath(&SC, &geo);
+      update_heatbath(&SC, &geo, &params);
     } else if (params.d_updater == 2) {
       update_single_cluster(&SC, &geo, &params, cluster);
     }

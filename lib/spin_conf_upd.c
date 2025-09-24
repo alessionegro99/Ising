@@ -7,7 +7,8 @@
 
 // perform one site update with Metropolis
 // return 1 if accepted, 0 otherwise
-int Metropolis(Spin_Conf *SC, Geometry const *const geo, long r) {
+int Metropolis(Spin_Conf *SC, Geometry const *const geo,
+               Params const *const params, long r) {
   int i, acc, s_r, S_r, k;
 
   S_r = 0;
@@ -21,7 +22,7 @@ int Metropolis(Spin_Conf *SC, Geometry const *const geo, long r) {
   if (k <= 0) {
     SC->lattice[r] *= -1;
     acc = +1;
-  } else if (myrand() <= SC->weights[k / 2 + DIM]) {
+  } else if (myrand() <= params->d_weights[k / 2 + DIM]) {
     SC->lattice[r] *= -1;
     acc = +1;
   } else {
@@ -38,14 +39,15 @@ void update_Metropolis(Spin_Conf *SC, Geometry const *const geo,
   acc_rate = 0;
   for (r = 0; r < geo->d_volume; r++) {
     raux = (long)((double)geo->d_volume * myrand());
-    acc_rate += Metropolis(SC, geo, raux);
+    acc_rate += Metropolis(SC, geo, params, raux);
   }
 
   params->d_acc = (double)acc_rate * (double)geo->d_inv_vol;
 }
 
 // perform one site update with the heatbath algorithm
-void heatbath(Spin_Conf *SC, Geometry const *const geo, long r) {
+void heatbath(Spin_Conf *SC, Geometry const *const geo,
+              Params const *const params, long r) {
   int i, s_r;
 
   s_r = 0;
@@ -55,7 +57,7 @@ void heatbath(Spin_Conf *SC, Geometry const *const geo, long r) {
     s_r += SC->lattice[nnm(geo, r, i)];
   }
 
-  if (myrand() < SC->weights[s_r / 2 + DIM]) {
+  if (myrand() < params->d_weights[s_r / 2 + DIM]) {
     SC->lattice[r] = +1;
   } else {
     SC->lattice[r] = -1;
@@ -63,12 +65,12 @@ void heatbath(Spin_Conf *SC, Geometry const *const geo, long r) {
 }
 
 // perform a complete update with heatbath
-void update_heatbath(Spin_Conf *SC, Geometry const *const geo) {
+void update_heatbath(Spin_Conf *SC, Geometry const *const geo,  Params const *const params) {
   long r, raux;
 
   for (r = 0; r < geo->d_volume; r++) {
     raux = (long)((double)geo->d_volume * myrand());
-    heatbath(SC, geo, raux);
+    heatbath(SC, geo, params, raux);
   }
 }
 
@@ -90,31 +92,38 @@ void single_cluster(Spin_Conf *SC, Geometry const *const geo,
     for (p = n_old; p < n_new; p++) {
       int i;
 
+      // sweeping all nearaest neighbors of cluster[p]
       for (i = 0; i < DIM; i++) {
         int j, flag;
 
         flag = 0;
 
-        x = nnp(geo, r, i);
+        // nearest neighbor + dir of cluster[p]
+        x = nnp(geo, cluster[p], i);
 
+        // check if x is already in the cluster
         for (j = 0; j < l_c; j++) {
           if (cluster[j] == x) {
             flag = 1;
             break;
           }
         }
+
+        // add x if it is not in the cluster
         if (flag == 0) {
           s_x = SC->lattice[x];
           if (s_x == s_r) {
             if (myrand() < params->d_padd) {
               cluster[l_c] = x;
+              l_c++;
             }
           }
         }
 
+        // nearest neighbor - dir
         flag = 0;
 
-        x = nnm(geo, r, i);
+        x = nnm(geo, cluster[p], i);
 
         for (j = 0; j < l_c; j++) {
           if (cluster[j] == x) {
@@ -127,6 +136,7 @@ void single_cluster(Spin_Conf *SC, Geometry const *const geo,
           if (s_x == s_r) {
             if (myrand() < params->d_padd) {
               cluster[l_c] = x;
+              l_c++;
             }
           }
         }
