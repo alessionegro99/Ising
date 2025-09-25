@@ -65,7 +65,8 @@ void heatbath(Spin_Conf *SC, Geometry const *const geo,
 }
 
 // perform a complete update with heatbath
-void update_heatbath(Spin_Conf *SC, Geometry const *const geo,  Params const *const params) {
+void update_heatbath(Spin_Conf *SC, Geometry const *const geo,
+                     Params const *const params) {
   long r, raux;
 
   for (r = 0; r < geo->d_volume; r++) {
@@ -94,9 +95,7 @@ void single_cluster(Spin_Conf *SC, Geometry const *const geo,
 
       // sweeping all nearaest neighbors of cluster[p]
       for (i = 0; i < DIM; i++) {
-        int j, flag;
-
-        flag = 0;
+        int j;
 
         // nearest neighbor + dir of cluster[p]
         x = nnp(geo, cluster[p], i);
@@ -104,13 +103,12 @@ void single_cluster(Spin_Conf *SC, Geometry const *const geo,
         // check if x is already in the cluster
         for (j = 0; j < l_c; j++) {
           if (cluster[j] == x) {
-            flag = 1;
-            break;
+            j = l_c;
           }
         }
 
         // add x if it is not in the cluster
-        if (flag == 0) {
+        if (j == l_c) {
           s_x = SC->lattice[x];
           if (s_x == s_r) {
             if (myrand() < params->d_padd) {
@@ -121,17 +119,14 @@ void single_cluster(Spin_Conf *SC, Geometry const *const geo,
         }
 
         // nearest neighbor - dir
-        flag = 0;
-
         x = nnm(geo, cluster[p], i);
 
         for (j = 0; j < l_c; j++) {
           if (cluster[j] == x) {
-            flag = 1;
-            break;
+            j = l_c;
           }
         }
-        if (flag == 0) {
+        if (j == l_c) {
           s_x = SC->lattice[x];
           if (s_x == s_r) {
             if (myrand() < params->d_padd) {
